@@ -1,40 +1,25 @@
 import React from 'react';
 import { useFormik } from 'formik'
+import * as Yup from 'yup';
 
 interface Values {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
+  firstName: string;
+  lastName: string;
+  email: string;
 }
 function SignupForm() {
-  const formik = useFormik({
+  const formik = useFormik<Values>({
     initialValues: {
       firstName: '',
       lastName: '',
       email: ''
     },
-    validate: values => {
-      const errors: Values = {};
-      if (!values.firstName) {
-        errors.firstName = '必須です。'
-      } else if (values.firstName.length > 15) {
-        errors.firstName = '15文字以内です。'
-      }
+    validationSchema: Yup.object({
+      firstName: Yup.string().max(15, '15文字までです').required('Required'),
+      lastName: Yup.string().max(15, '15文字までです').required('Required'),
+      email: Yup.string().email('Invalid email address').required('Required'),
 
-      if (!values.lastName) {
-        errors.lastName = '必須です。'
-      } else if (values.lastName.length > 15) {
-        errors.lastName = '15文字以内です。'
-      }
-
-      if (!values.email) {
-        errors.email = '必須です。'
-      } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
-        errors.email = '不正なメールアドレスです。'
-      }
-
-      return errors;
-    },
+    }),
     onSubmit: values => {
       alert(JSON.stringify(values, null, 2));
     }
